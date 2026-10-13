@@ -3,7 +3,7 @@ services:
     name: insecurebank-rn-lab-api
     runtime: node
     plan: free
-    buildCommand: npm ci && npm run build -w @insecurebank/api
+    buildCommand: npm ci --include=dev && npm run build -w @insecurebank/api
     startCommand: npm run start -w @insecurebank/api
     healthCheckPath: /health
     envVars:

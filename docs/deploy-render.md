@@ -30,7 +30,7 @@ Aiven's MySQL service URI includes TLS mode. The API separately requires the CA 
 
 1. Push the project to a Git provider connected to your Render account. The current local project has no Git remote, so Render cannot deploy it until you push/connect a repository.
 2. In Render, create a Blueprint and connect the repository.
-3. Review `render.yaml`. It configures one Free API web service. It prompts for `MYSQL_URL` and `MYSQL_SSL_CA`; provide the Aiven service URI and the contents of the downloaded PEM CA certificate. These are server-side Render environment variables, never mobile settings.
+3. Review `render.yaml`. Its build command explicitly includes development dependencies so TypeScript and type declarations are available during compilation, even when `NODE_ENV=production`. It configures one Free API web service and prompts for `MYSQL_URL` and `MYSQL_SSL_CA`; provide the Aiven service URI and the contents of the downloaded PEM CA certificate. These are server-side Render environment variables, never mobile settings.
 4. Apply the Blueprint and wait for deployment. Open `https://YOUR-SERVICE.onrender.com/health`; it should return `{"status":"ok","lab":"InsecureBank RN"}`.
 5. Set the API URL in the mobile app's local `.env`:
 
