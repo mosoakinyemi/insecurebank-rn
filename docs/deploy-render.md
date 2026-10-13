@@ -1,15 +1,17 @@
 # Optional Render + Aiven playground
 
-Run the workshop locally by default. Use this guide if you want attendees to share one hosted API for account creation and corrected-mode practice. Keep vulnerable BOLA exercises on a local or isolated API.
+Use this guide if you want attendees to share one hosted API for account creation and the vulnerable BOLA exercise.
 
 ## What this deploys
 
 - One public Express API web service on Render's Free plan, with HTTPS.
 - One Aiven MySQL Free service (1 GB storage) for hosted accounts and transactions.
-- Corrected authorization in production and no public database-reset route.
-- Synthetic data only. Registration is open and has no email verification; share the API URL only with workshop participants.
+- Vulnerable BOLA authorization for the training exercise and no public database-reset route.
+- Synthetic data only. Registration is open and has no email verification; anyone with the URL can access the exercise.
 
-Local runs continue to use SQLite. The hosted service selects MySQL when `MYSQL_URL` exists and requires `MYSQL_SSL_CA` to verify the database certificate. These are server-side values; never place them in the mobile `.env` or app bundle.
+Local runs continue to use SQLite. The hosted service selects MySQL when `MYSQL_URL` exists and requires `MYSQL_SSL_CA` to verify the database certificate. These are server-side values; never place them in the mobile `.env` or app bundle. The Render Blueprint explicitly sets `AUTHZ_MODE=vulnerable`, which production honors.
+
+The hosted API intentionally lets an authenticated user read another synthetic user's account and transactions by changing the account ID. Anyone with the public URL can register and try this. Never load real or personally identifying data into this service. The reset route stays disabled, and transfer source-account ownership checks remain enabled.
 
 ## Free-tier behavior
 
@@ -28,9 +30,9 @@ Aiven's MySQL service URI includes TLS mode. The API separately requires the CA 
 
 ## Deploy on Render
 
-1. Push the project to a Git provider connected to your Render account. The current local project has no Git remote, so Render cannot deploy it until you push/connect a repository.
+1. Push the project branch containing the current files to a Git provider connected to your Render account.
 2. In Render, create a Blueprint and connect the repository.
-3. Review `render.yaml`. Its build command explicitly includes development dependencies so TypeScript and type declarations are available during compilation, even when `NODE_ENV=production`. It configures one Free API web service and prompts for `MYSQL_URL` and `MYSQL_SSL_CA`; provide the Aiven service URI and the contents of the downloaded PEM CA certificate. These are server-side Render environment variables, never mobile settings.
+3. Review `render.yaml`. Its build command explicitly includes development dependencies so TypeScript and type declarations are available during compilation, even when `NODE_ENV=production`. It configures one Free API web service in vulnerable mode and prompts for `MYSQL_URL` and `MYSQL_SSL_CA`; provide the Aiven service URI and the contents of the downloaded PEM CA certificate. These are server-side Render environment variables, never mobile settings.
 4. Apply the Blueprint and wait for deployment. Open `https://YOUR-SERVICE.onrender.com/health`; it should return `{"status":"ok","lab":"InsecureBank RN"}`.
 5. Set the API URL in the mobile app's local `.env`:
 
@@ -43,7 +45,7 @@ Aiven's MySQL service URI includes TLS mode. The API separately requires the CA 
 ## Operations
 
 - Keep the deployment on one API instance and use synthetic workshop data only.
-- Do not set `AUTHZ_MODE=vulnerable`, enable public reset, or use real user or financial data.
+- Do not enable public reset or use real user or financial data. The BOLA flaw is intentionally exposed on this training instance.
 - Monitor Aiven for idle-service notifications and restarts; Render's first request after sleep may be slow.
 - Turn off or delete the services when you no longer need the shared playground.
 

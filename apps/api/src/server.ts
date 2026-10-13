@@ -4,7 +4,10 @@ import { createApp, type AuthzMode } from './app.js';
 import { createDatabase, createMySqlDatabase, resetDatabase, type LabDatabase } from './db.js';
 
 loadLocalEnv();
-const mode = process.env.NODE_ENV === 'production' ? 'corrected' : process.env.AUTHZ_MODE === 'corrected' ? 'corrected' : 'vulnerable';
+const requestedMode = process.env.AUTHZ_MODE;
+const mode: AuthzMode = requestedMode === 'vulnerable' || requestedMode === 'corrected'
+  ? requestedMode
+  : process.env.NODE_ENV === 'production' ? 'corrected' : 'vulnerable';
 const host = process.env.API_HOST ?? '127.0.0.1';
 const port = Number(process.env.PORT ?? process.env.API_PORT ?? 3000);
 async function main() {

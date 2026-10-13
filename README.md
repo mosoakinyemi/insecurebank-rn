@@ -1,6 +1,6 @@
 # InsecureBank RN
 
-An intentionally vulnerable Android training app and Node.js API for SecureCircle's **“What's Hiding in Your APK? A Practical Introduction to Mobile Pentesting.”** All users, balances, tokens, and transfers are synthetic. Run the vulnerable exercises locally. An optional hosted playground can let attendees try the corrected API with their own synthetic accounts.
+An intentionally vulnerable Android training app and Node.js API for SecureCircle's **“What's Hiding in Your APK? A Practical Introduction to Mobile Pentesting.”** All users, balances, tokens, and transfers are synthetic. Vulnerable exercises run locally by default; the optional public Render playground can also run the BOLA exercise against synthetic accounts.
 
 ## Architecture
 
@@ -80,6 +80,6 @@ From the sign-in screen, choose **New here? Create an account**. Accounts are sy
 
 ### Optional Render playground
 
-[`render.yaml`](render.yaml) describes a free API service using corrected ownership checks, HTTPS, and a disabled public reset route. Configure its server-only credentials to connect to an Aiven Free MySQL service. See the [Render deployment guide](docs/deploy-render.md) for free-tier limits and setup. Keep vulnerable BOLA mode local; the hosted service is shared and anyone with the URL can register.
+[`render.yaml`](render.yaml) describes a free public API service in vulnerable BOLA mode, with HTTPS and a disabled public reset route. Configure its server-only credentials to connect to an Aiven Free MySQL service. Anyone with the URL can register and test the synthetic BOLA flaw, so never use real data. See the [Render deployment guide](docs/deploy-render.md) for free-tier limits and setup.
 
 Current build and runtime verification results are recorded in [validation status](docs/validation.md).

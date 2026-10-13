@@ -16,6 +16,6 @@ services:
       - key: MYSQL_SSL_CA
         sync: false
       - key: AUTHZ_MODE
-        value: corrected
+        value: vulnerable
       - key: LAB_ALLOW_RESET
         value: "false"

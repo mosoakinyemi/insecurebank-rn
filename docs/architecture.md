@@ -21,7 +21,7 @@ The API listens on `127.0.0.1:3000` by default. Android Emulator reaches host lo
 
 `AUTHZ_MODE=vulnerable` verifies the bearer session but intentionally skips account ownership checks for account and transaction reads. `AUTHZ_MODE=corrected` checks that each requested account belongs to the authenticated user. Both modes enforce source-account ownership for transfers; changing client navigation cannot alter the server decision.
 
-Exercise A's static fake console key exposes only a synthetic support message. Exercise C's endpoint returns an authenticated user's synthetic account balance over HTTP. No route integrates with a real financial provider. Use a local instance for vulnerable BOLA demonstrations. The optional Render playground stays in corrected mode and disables reset. Local storage remains SQLite; the hosted API uses Aiven MySQL.
+Exercise A's static fake console key exposes only a synthetic support message. Exercise C's endpoint returns an authenticated user's synthetic account balance over HTTP. No route integrates with a real financial provider. Both local and hosted modes can demonstrate BOLA behavior; the Render Blueprint explicitly selects vulnerable mode and disables reset. The hosted API is public, so use synthetic data only. Local storage remains SQLite; the hosted API uses Aiven MySQL.
 
 ## Exercise mapping
 

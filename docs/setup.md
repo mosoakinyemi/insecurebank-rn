@@ -26,7 +26,7 @@ For a physical device on a trusted isolated LAN, temporarily run `API_HOST=0.0.0
 
 ## Optional shared API on Render
 
-For a shared audience playground, follow [the Render + Aiven deployment guide](deploy-render.md). The deployment is a public service, so it uses corrected authorization and disables reset. Local mode remains the place to demonstrate vulnerable BOLA behavior and defaults to SQLite. Set `MYSQL_URL` and `MYSQL_SSL_CA` to use a TLS-verified MySQL database in another environment.
+For a shared audience playground, follow [the Render + Aiven deployment guide](deploy-render.md). The Blueprint intentionally enables vulnerable authorization on the public service and disables reset. Use synthetic data only; anyone with the service URL can register and exercise the BOLA flaw. Local mode defaults to SQLite. Set `MYSQL_URL` and `MYSQL_SSL_CA` to use a TLS-verified MySQL database in another environment.
 
 ## Commands
 
