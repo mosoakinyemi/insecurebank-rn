@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+repo_root="$(CDPATH= cd -- "$(dirname "$0")/.." && pwd)"
+export LAB_API_BASE_URL="${LAB_API_BASE_URL:-http://10.0.2.2:3000}"
+cd "$repo_root/android"
+./gradlew assembleRelease
+mkdir -p "$repo_root/dist"
+cp app/build/outputs/apk/release/app-release.apk "$repo_root/dist/insecurebank-rn-lab-training.apk"
+printf 'Training APK: %s\n' "$repo_root/dist/insecurebank-rn-lab-training.apk"

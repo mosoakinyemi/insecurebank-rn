@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">InsecureBankRN</string>
+    <string name="app_name">InsecureBank LAB</string>
+    <!-- Exercise A: searchable APK resource mirrors the fake key used by src/config.ts. -->
+    <string name="lab_support_key" translatable="false">SC-LAB-PRIV-4D92A7</string>
 </resources>

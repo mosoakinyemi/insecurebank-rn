@@ -1,97 +1,85 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# InsecureBank RN
 
-# Getting Started
+An intentionally vulnerable Android training app and Node.js API for SecureCircle's **“What's Hiding in Your APK? A Practical Introduction to Mobile Pentesting.”** All users, balances, tokens, and transfers are synthetic. Run the vulnerable exercises locally. An optional hosted playground can let attendees try the corrected API with their own synthetic accounts.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Architecture
 
-## Step 1: Start Metro
+This project uses the React Native Community CLI (bare React Native), TypeScript, a native Android Gradle project, and an Express API. Local development uses SQLite; the optional Render deployment uses Aiven MySQL. The CLI keeps the manifest, resources, and network policy in the project for APK inspection. The mobile app lives at the repository root to keep the generated CLI Android/Metro setup conventional; the API is in `apps/api/`.
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+```text
+Android emulator ── HTTP ──> Express API ──> SQLite locally / Aiven MySQL on Render
+    │                          ├─ vulnerable/corrected authorization mode
+    ├─ AsyncStorage session    └─ loopback bind by default
+    └─ Android manifest + network security config
+```
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+## Prerequisites and setup
+
+- Node.js 22.11 or newer and npm.
+- Android Studio / Android SDK, an emulator, platform tools, and Java 17.
+- Install dependencies once, then run offline for the local demo:
 
 ```sh
-# Using npm
+npm install
+npm run reset
+npm run api
+```
+
+In another terminal, start the Android emulator and run:
+
+```sh
 npm start
-
-# OR using Yarn
-yarn start
-```
-
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
 npm run android
-
-# OR using Yarn
-yarn android
 ```
 
-### iOS
+The Android emulator uses `10.0.2.2` to reach the development machine's loopback service. `localhost` inside Android points back to Android itself. Genymotion commonly uses `10.0.3.2`. To change the mobile API URL, set `LAB_API_BASE_URL` before starting Metro and the Android command, for example `LAB_API_BASE_URL=http://10.0.3.2:3000 npm start` and `LAB_API_BASE_URL=http://10.0.3.2:3000 npm run android`. This is public lab configuration, not a secret; no production endpoint is configured.
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+The API binds to `127.0.0.1:3000`. No cloud service is needed for the local demo. Each attendee can run their own API and use the included synthetic data. To use a physical device, use a trusted isolated LAN and temporarily set `API_HOST=0.0.0.0`; use the host LAN address in `LAB_API_BASE_URL`, then restore loopback after the demo.
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+### `.env` security exercise
 
-```sh
-bundle install
-```
+Copy `.env.example` to `.env`, then run the app normally. `LAB_DEMO_SECRET` is intentionally fake and is compiled into the React Native app to demonstrate that `.env` is configuration, not a secure vault. Anyone who can inspect the APK or app bundle can recover client-side values. Never put real credentials, signing keys, or privileged API tokens in a mobile `.env`; keep server-only secrets on the API host. `.env` stays out of Git, while `.env.example` contains safe sample values.
 
-Then, and every time you update your native dependencies, run:
+## Demo accounts
 
-```sh
-bundle exec pod install
-```
+| Name | Email | Password | Account |
+| --- | --- | --- | --- |
+| Ada Lovelace | `ada@lab.test` | `lab-ada-2468` | `acct-1001` |
+| Grace Hopper | `grace@lab.test` | `lab-grace-1357` | `acct-2002` |
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+All credentials and balances are fictional.
 
-```sh
-# Using npm
-npm run ios
+## Run, reset, and validate
 
-# OR using Yarn
-yarn ios
-```
+- `npm run api`: vulnerable BOLA mode, loopback only.
+- `npm run api:corrected`: server-side ownership checks enabled.
+- `npm run reset`: restore seed data and invalidate sessions.
+- `npm test`: API health, login, ownership, BOLA, transfer, and reset checks.
+- `npm run typecheck`: TypeScript checks for mobile and API.
+- `npm run build:apk`: assemble an installable, debug-signed release APK with its JavaScript bundle at `dist/insecurebank-rn-lab-training.apk`.
+- `adb install -r dist/insecurebank-rn-lab-training.apk`: install the APK.
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+The generated release artifact targets the arm64 Android emulator used for this lab. It is still a vulnerable training build, uses a debug signing key, and is not for distribution. Change `reactNativeArchitectures` in `android/gradle.properties` if you need a different emulator/device ABI. `npm run android` is the development flow and needs Metro running.
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+## Exercises
 
-## Step 3: Modify your app
+- [A — hardcoded client key](docs/vulnerabilities/A-hardcoded-value.md)
+- [B — broken object-level authorization](docs/vulnerabilities/B-bola.md)
+- [C — cleartext HTTP](docs/vulnerabilities/C-cleartext-http.md)
+- [D — insecure local storage](docs/vulnerabilities/D-local-storage.md)
+- [E — sensitive logging](docs/vulnerabilities/E-sensitive-logs.md)
+- [G — `.env` values bundled into the mobile app](docs/vulnerabilities/G-env-mobile-config.md)
+- [F — optional exported component](docs/vulnerabilities/F-exported-component.md)
+- [Demo walkthrough](docs/demo-walkthrough.md) · [Findings matrix](docs/security-findings.md) · [Troubleshooting](docs/troubleshooting.md)
 
-Now that you have successfully run the app, let's make changes!
+For the API contract and exact setup commands, see [setup](docs/setup.md) and [architecture](docs/architecture.md). The reference InsecureBankv2 project is used for learning themes only; its implementation is not ported.
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+### Create an account
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+From the sign-in screen, choose **New here? Create an account**. Accounts are synthetic and receive an isolated, empty transaction history and a demo balance. Passwords are hashed on the API. Use a unique training email address; there is no email verification or password recovery.
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+### Optional Render playground
 
-## Congratulations! :tada:
+[`render.yaml`](render.yaml) describes a free API service using corrected ownership checks, HTTPS, and a disabled public reset route. Configure its server-only credentials to connect to an Aiven Free MySQL service. See the [Render deployment guide](docs/deploy-render.md) for free-tier limits and setup. Keep vulnerable BOLA mode local; the hosted service is shared and anyone with the URL can register.
 
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Current build and runtime verification results are recorded in [validation status](docs/validation.md).

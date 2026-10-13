@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: insecurebank-rn-lab-api
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build -w @insecurebank/api
+    startCommand: npm run start -w @insecurebank/api
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: API_HOST
+        value: 0.0.0.0
+      - key: MYSQL_URL
+        sync: false
+      - key: MYSQL_SSL_CA
+        sync: false
+      - key: AUTHZ_MODE
+        value: corrected
+      - key: LAB_ALLOW_RESET
+        value: "false"
