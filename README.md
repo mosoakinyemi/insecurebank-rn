@@ -2,6 +2,14 @@
 
 An intentionally vulnerable Android training app and Node.js API for SecureCircle's **“What's Hiding in Your APK? A Practical Introduction to Mobile Pentesting.”** All users, balances, tokens, and transfers are synthetic. Vulnerable exercises run locally by default; the optional public Render playground can also run the BOLA exercise against synthetic accounts.
 
+<table>
+  <tr>
+    <td><img src="./docs/images/preview-1.png" width="250" /></td>
+    <td><img src="./docs/images/preview-2.png" width="250" /></td>
+    <td><img src="./docs/images/preview-3.png" width="250" /></td>
+  </tr>
+</table>
+
 ## Architecture
 
 This project uses the React Native Community CLI (bare React Native), TypeScript, a native Android Gradle project, and an Express API. Local development uses SQLite; the optional Render deployment uses Aiven MySQL. The CLI keeps the manifest, resources, and network policy in the project for APK inspection. The mobile app lives at the repository root to keep the generated CLI Android/Metro setup conventional; the API is in `apps/api/`.
